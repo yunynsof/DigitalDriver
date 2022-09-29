@@ -1,0 +1,6 @@
+hn\com\tigo\josm\orchestrator\digital\driver\test\AllTest.class
+hn\com\tigo\josm\orchestrator\digital\driver\test\AbstractTest.class
+hn\com\tigo\josm\orchestrator\digital\driver\test\TigoSportProvisioningOperationTest.class
+hn\com\tigo\josm\orchestrator\digital\driver\test\DigitalDeleteOperationTest.class
+hn\com\tigo\josm\orchestrator\digital\driver\test\EjbContainerContext.class
+hn\com\tigo\josm\orchestrator\digital\driver\test\DigitalCreateOperationTest.class

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractDriver.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DigitalDriver</a> &gt; <a href="index.source.html" class="el_package">hn.com.tigo.josm.orchestrator.driver.digital</a> &gt; <span class="el_source">AbstractDriver.java</span></div><h1>AbstractDriver.java</h1><pre class="source lang-java linenums">package hn.com.tigo.josm.orchestrator.driver.digital;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
+
+import hn.com.tigo.josm.common.adapter.dto.ParameterArray;
+import hn.com.tigo.josm.common.adapter.dto.ParameterType;
+import hn.com.tigo.josm.common.adapter.dto.TaskRequestType;
+import hn.com.tigo.josm.common.adapter.dto.TaskResponseType;
+import hn.com.tigo.josm.common.cache.ObjectFactoryCache;
+import hn.com.tigo.josm.common.exceptions.AdapterException;
+import hn.com.tigo.josm.common.exceptions.HttpClientException;
+import hn.com.tigo.josm.common.exceptions.enumerators.AdapterErrorCode;
+import hn.com.tigo.josm.orchestrator.driver.digital.utils.DigitalConstantsDriver;
+
+/**
+ * AbstractDriver This abstract class contains properties and features for DigitalDriver.
+ *
+ * @author Leonardo Vijil
+ * @version 1.0.0
+ * @since 16/10/2019
+ */
+public abstract class AbstractDriver {
+
+	/** The Constant LOGGER. */
+<span class="fc" id="L38">	protected static final Logger LOGGER = Logger</span>
+			.getLogger(AbstractDriver.class);
+
+	/** The object factory cache. */
+<span class="fc" id="L42">	protected static ObjectFactoryCache objectFactoryCache = ObjectFactoryCache</span>
+			.getInstance();
+
+	/**  the httpDeleteService. */
+	protected String httpDeleteService;
+
+	/** The httpCreateService. */
+	protected String httpCreateService;
+	
+	/** Attribute that determine httpTigoSportProv. */
+	protected String httpTigoSportProv;
+	
+	/** Attribute that determine userNameDelete. */
+	protected String userNameDelete;
+	
+	/** Attribute that determine passwordDelete. */
+	protected String passwordDelete;
+	
+	/** Attribute that determine userNameCreate. */
+	protected String userNameCreate;
+	
+	/** Attribute that determine passwordCreate. */
+	protected String passwordCreate;
+	
+	/** Attribute that determine passwordTigoSport. */
+	protected String passwordTigoSport;
+
+	/** Attribute that determine taskType. */
+	protected TaskRequestType taskType;
+
+	/** Attribute that determine properties. */
+	private Map&lt;String, String&gt; properties;
+
+	/**
+	 * Instantiates a new abstract driver.
+	 */
+<span class="fc" id="L78">	public AbstractDriver() {</span>
+<span class="fc" id="L79">		this.properties = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L80">		properties.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L81">	}</span>
+
+	/**
+	 * Call service.
+	 *
+	 * @param url the url
+	 * @param method the method
+	 * @param utf8 the utf 8
+	 * @param user the user
+	 * @param pass the pass
+	 * @return the string
+	 * @throws AdapterException the adapter exception
+	 */
+	protected String callService(final String url, final String method, final Charset utf8, final String user, final String pass)
+			throws AdapterException {
+<span class="fc" id="L96">		String response = &quot;&quot;;</span>
+		try {
+<span class="fc" id="L98">			String userpass = user + &quot;:&quot; + pass;</span>
+<span class="fc" id="L99">            String basicAuth = &quot;Basic &quot; + new String(Base64.encodeBase64(userpass.getBytes()));</span>
+<span class="fc" id="L100">			URL weburl = new URL(url);</span>
+<span class="fc" id="L101">			HttpURLConnection conn = (HttpURLConnection) weburl.openConnection();</span>
+<span class="fc" id="L102">			conn.setRequestProperty(&quot;Authorization&quot;, basicAuth);</span>
+<span class="fc" id="L103">			conn.setRequestMethod(method);</span>
+<span class="fc" id="L104">			conn.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L105">			conn.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
+			InputStreamReader in;
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">			if (conn.getResponseCode() == 200) {</span>
+<span class="nc" id="L108">				in = new InputStreamReader(conn.getInputStream());</span>
+			}else{
+<span class="fc" id="L110">				in = new InputStreamReader(conn.getErrorStream());</span>
+			}
+<span class="fc" id="L112">			BufferedReader br = new BufferedReader(in);</span>
+			String output;
+<span class="fc bfc" id="L114" title="All 2 branches covered.">			while ((output = br.readLine()) != null) {</span>
+<span class="fc" id="L115">				response = response + output;</span>
+			}
+<span class="fc" id="L117">			conn.disconnect();</span>
+<span class="fc" id="L118">			in.close();</span>
+<span class="fc" id="L119">			br.close();</span>
+<span class="nc" id="L120">		} catch (Exception e) {</span>
+<span class="nc" id="L121">			LOGGER.error(DigitalConstantsDriver.CREATE_REQUEST_METHOD</span>
+					+ DigitalConstantsDriver.ERROR_TOKEN + e.getMessage());
+<span class="nc" id="L123">			throw new AdapterException(AdapterErrorCode.PLATFORM_ERROR,</span>
+					e.getMessage());
+<span class="fc" id="L125">		}</span>
+<span class="fc" id="L126">		return response;</span>
+	}
+
+	
+	/**
+	 * Validate service response.
+	 *
+	 * @param responseDriver            the response driver
+	 * @return the task response type
+	 * @throws AdapterException             the adapter exception
+	 */
+	protected TaskResponseType validateResponse(
+			final TaskResponseType responseDriver) throws AdapterException {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">		if (responseDriver.getResponseCode() != 0) {</span>
+<span class="nc" id="L140">			LOGGER.error(responseDriver.getResponseDescription());</span>
+<span class="nc" id="L141">			throw new AdapterException(AdapterErrorCode.PLATFORM_ERROR,</span>
+					responseDriver.getResponseDescription(),
+					String.valueOf(responseDriver.getResponseCode()), null);
+		}
+
+<span class="fc" id="L146">		return responseDriver;</span>
+	}
+
+	/**
+	 * Creates the response.
+	 *
+	 * @param responseCode
+	 *            the response code
+	 * @param responseDescription
+	 *            the response description
+	 * @param param
+	 *            the param
+	 * @return the task response type
+	 */
+	protected TaskResponseType createDriverToAdapterResponse(
+			final String responseCode, final String responseDescription,
+			final ParameterArray param) {
+<span class="fc" id="L163">		final TaskResponseType response = new TaskResponseType();</span>
+<span class="fc" id="L164">		response.setResponseCode(Integer.parseInt(responseCode));</span>
+<span class="fc" id="L165">		response.setResponseDescription(responseDescription);</span>
+<span class="fc" id="L166">		response.setParameters(param);</span>
+<span class="fc" id="L167">		return response;</span>
+	}
+
+
+	/**
+	 * Builds the new parameter for the ParameterArray class.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 * @return the parameter type
+	 */
+	protected ParameterType buildNewParameter(final String name,
+			final String value) {
+<span class="fc" id="L182">		final ParameterType parameter = new ParameterType();</span>
+<span class="fc" id="L183">		parameter.setName(name);</span>
+<span class="fc" id="L184">		parameter.setValue(value);</span>
+<span class="fc" id="L185">		return parameter;</span>
+	}
+
+	/**
+	 * Method that allows to execute a specific driver.
+	 *
+	 * @return the task response type
+	 * @throws AdapterException
+	 *             the adapter exception
+	 */
+	public abstract TaskResponseType execute() throws AdapterException;
+
+	
+	/**
+	 * Post.
+	 *
+	 * @param endpoint the endpoint
+	 * @param password the password
+	 * @param request the request
+	 * @return the string
+	 * @throws AdapterException the adapter exception
+	 */
+	protected String post(final String endpoint, final String password, final String request) throws AdapterException {
+<span class="fc" id="L208">		HttpConnectorPost post = null;</span>
+<span class="fc" id="L209">		String response = null;</span>
+		try {
+<span class="fc" id="L211">			properties.put(HttpHeaders.AUTHORIZATION, &quot;Basic &quot; + password);</span>
+<span class="fc" id="L212">			post = new HttpConnectorPost(endpoint, properties);</span>
+<span class="fc" id="L213">			response = post.invoke(request, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L214">		} catch (HttpClientException e) {</span>
+<span class="nc" id="L215">			LOGGER.error(e.getMessage(), e);</span>
+<span class="nc" id="L216">			throw new AdapterException(AdapterErrorCode.PLATFORM_ERROR, e.getMessage(),</span>
+					String.valueOf(AdapterErrorCode.COMMUNICATION_ERROR), null);
+<span class="fc" id="L218">		}</span>
+<span class="fc" id="L219">		return response;</span>
+	}
+
+	
+	/**
+	 * Creates the response.
+	 *
+	 * @param responseCode the response code
+	 * @param responseDescription the response description
+	 * @param param the param
+	 * @return the task response type
+	 */
+	protected TaskResponseType createResponse(final int responseCode, final String responseDescription,
+			final ParameterArray param) {
+<span class="fc" id="L233">		final TaskResponseType response = new TaskResponseType();</span>
+<span class="fc" id="L234">		response.setResponseCode(responseCode);</span>
+<span class="fc" id="L235">		response.setResponseDescription(responseDescription);</span>
+<span class="fc" id="L236">		response.setParameters(param);</span>
+<span class="fc" id="L237">		return response;</span>
+	}
+
+	/**
+	 * Gets the parameter.
+	 *
+	 * @param value the value
+	 * @param constants the constants
+	 * @return the parameter
+	 */
+	public static ParameterType getParameter(final String value, final String constants) {
+
+<span class="fc" id="L249">		ParameterType parameterResponse = new ParameterType();</span>
+<span class="fc" id="L250">		parameterResponse.setName(constants);</span>
+<span class="fc" id="L251">		parameterResponse.setValue(value);</span>
+<span class="fc" id="L252">		return parameterResponse;</span>
+	}
+
+	/**
+	 * Sets the http delete service.
+	 *
+	 * @param httpDeleteService            the httpDeleteService to set
+	 */
+	public final void setHttpDeleteService(String httpDeleteService) {
+<span class="fc" id="L261">		this.httpDeleteService = httpDeleteService;</span>
+<span class="fc" id="L262">	}</span>
+
+
+	/**
+	 * Sets the http create service.
+	 *
+	 * @param httpCreateService            the httpCreateService to set
+	 */
+	public final void setHttpCreateService(String httpCreateService) {
+<span class="fc" id="L271">		this.httpCreateService = httpCreateService;</span>
+<span class="fc" id="L272">	}</span>
+
+	/**
+	 * Sets the user name delete.
+	 *
+	 * @param userNameDelete the userNameDelete to set
+	 */
+	public final void setUserNameDelete(String userNameDelete) {
+<span class="fc" id="L280">		this.userNameDelete = userNameDelete;</span>
+<span class="fc" id="L281">	}</span>
+
+
+	/**
+	 * Sets the password delete.
+	 *
+	 * @param passwordDelete the passwordDelete to set
+	 */
+	public final void setPasswordDelete(String passwordDelete) {
+<span class="fc" id="L290">		this.passwordDelete = passwordDelete;</span>
+<span class="fc" id="L291">	}</span>
+
+	/**
+	 * Gets the user name create.
+	 *
+	 * @return the userNameCreate
+	 */
+	public final String getUserNameCreate() {
+<span class="fc" id="L299">		return userNameCreate;</span>
+	}
+
+	/**
+	 * Sets the user name create.
+	 *
+	 * @param userNameCreate the userNameCreate to set
+	 */
+	public final void setUserNameCreate(String userNameCreate) {
+<span class="fc" id="L308">		this.userNameCreate = userNameCreate;</span>
+<span class="fc" id="L309">	}</span>
+
+
+	/**
+	 * Sets the password create.
+	 *
+	 * @param passwordCreate the passwordCreate to set
+	 */
+	public final void setPasswordCreate(String passwordCreate) {
+<span class="fc" id="L318">		this.passwordCreate = passwordCreate;</span>
+<span class="fc" id="L319">	}</span>
+
+
+	/**
+	 * Sets the http tigo sport prov.
+	 *
+	 * @param httpTigoSportProv the new http tigo sport prov
+	 */
+	public void setHttpTigoSportProv(String httpTigoSportProv) {
+<span class="fc" id="L328">		this.httpTigoSportProv = httpTigoSportProv;</span>
+<span class="fc" id="L329">	}</span>
+
+	
+	/**
+	 * Sets the password tigo sport.
+	 *
+	 * @param passwordTigoSport the new password tigo sport
+	 */
+	public void setPasswordTigoSport(String passwordTigoSport) {
+<span class="fc" id="L338">		this.passwordTigoSport = passwordTigoSport;</span>
+<span class="fc" id="L339">	}</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

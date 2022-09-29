@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DigitalDeleteOperation.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DigitalDriver</a> &gt; <a href="index.source.html" class="el_package">hn.com.tigo.josm.orchestrator.driver.digital.operations</a> &gt; <span class="el_source">DigitalDeleteOperation.java</span></div><h1>DigitalDeleteOperation.java</h1><pre class="source lang-java linenums">package hn.com.tigo.josm.orchestrator.driver.digital.operations;
+
+import java.nio.charset.StandardCharsets;
+
+import hn.com.tigo.josm.common.adapter.dto.ParameterArray;
+import hn.com.tigo.josm.common.adapter.dto.TaskResponseType;
+import hn.com.tigo.josm.common.exceptions.AdapterException;
+import hn.com.tigo.josm.common.exceptions.enumerators.AdapterErrorCode;
+import hn.com.tigo.josm.orchestrator.driver.digital.AbstractDriver;
+import hn.com.tigo.josm.orchestrator.driver.digital.request.DeleteServiceRequest;
+import hn.com.tigo.josm.orchestrator.driver.digital.utils.DigitalConstantsDriver;
+
+/**
+ * When an external system invokes this interface, the DigitalRequest is
+ * executed. This interface is used
+ *
+ * @author Leonardo Vijil
+ * @version 1.0.0
+ * @since 14/03/2021
+ */
+public class DigitalDeleteOperation extends AbstractDriver {
+
+	/** Attribute that determine request. */
+	private final DeleteServiceRequest request;
+	
+
+	/**
+	 * Instantiates a new digital delete operation.
+	 *
+	 * @param request the request
+	 */
+<span class="fc" id="L32">	public DigitalDeleteOperation(final DeleteServiceRequest request) {</span>
+<span class="fc" id="L33">		this.request = request;</span>
+<span class="fc" id="L34">	}</span>
+	
+
+	/* (non-Javadoc)
+	 * @see hn.com.tigo.josm.orchestrator.driver.digital.AbstractDriver#execute()
+	 */
+	@Override
+	public TaskResponseType execute() throws AdapterException {
+<span class="fc" id="L42">		TaskResponseType responseDriver = null;</span>
+<span class="fc" id="L43">		final ParameterArray parameterArray = new ParameterArray();</span>
+		try{
+<span class="fc" id="L45">			String url = String.format(this.httpDeleteService, request.getSubscriber(), request.getOfferId(), request.getConsumer());</span>
+<span class="fc" id="L46">			final String result = callService(url, &quot;DELETE&quot;, StandardCharsets.UTF_8, this.userNameDelete, this.passwordDelete);</span>
+<span class="fc" id="L47">			parameterArray.getParameter().add(buildNewParameter(DigitalConstantsDriver.JSON_RESPONSE, result));</span>
+<span class="fc" id="L48">			responseDriver = createDriverToAdapterResponse(String.valueOf(DigitalConstantsDriver.CODE_SUCCESSFUL),</span>
+					DigitalConstantsDriver.TITLE_SUCCESSFUL, parameterArray);
+<span class="fc" id="L50">		}catch (Exception e) {</span>
+<span class="fc" id="L51">			LOGGER.error(e.getMessage(), e);</span>
+<span class="fc" id="L52">			throw new AdapterException(AdapterErrorCode.COMMUNICATION_ERROR, DigitalConstantsDriver.ERROR_MESSAGE);</span>
+
+<span class="fc" id="L54">		}</span>
+<span class="fc" id="L55">		validateResponse(responseDriver);</span>
+<span class="fc" id="L56">		return responseDriver;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

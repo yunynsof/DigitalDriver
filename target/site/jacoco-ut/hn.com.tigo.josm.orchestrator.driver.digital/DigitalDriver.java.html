@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DigitalDriver.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DigitalDriver</a> &gt; <a href="index.source.html" class="el_package">hn.com.tigo.josm.orchestrator.driver.digital</a> &gt; <span class="el_source">DigitalDriver.java</span></div><h1>DigitalDriver.java</h1><pre class="source lang-java linenums">package hn.com.tigo.josm.orchestrator.driver.digital;
+
+import hn.com.tigo.josm.common.adapter.dto.TaskResponseType;
+import hn.com.tigo.josm.common.exceptions.AdapterException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+
+/**
+ * The Class DigitalDriver is a Driver Project which contains objects based on
+ * service rest objects and is used to create an object to invoke.
+ *
+ * @author Leonardo Vijil
+ * @version 1.0.0
+ * @since 14/03/2021
+ */
+public class DigitalDriver{
+		
+	/** the httpDeleteService. */
+	private String httpDeleteService;
+	
+	/** The httpCreateService. */
+	private String httpCreateService;
+	
+	/** Attribute that determine httpTigoSportProv. */
+	private String httpTigoSportProv;
+	
+	/** Attribute that determine userNameDelete. */
+	private String userNameDelete;
+	
+	/** Attribute that determine passwordDelete. */
+	private String passwordDelete;
+	
+	/** Attribute that determine userNameCreate. */
+	private String userNameCreate;
+	
+	/** Attribute that determine passwordCreate. */
+	private String passwordCreate;
+	
+	/** Attribute that determine passwordTigoSport. */
+	private String passwordTigoSport;
+	
+	
+
+	/**
+	 * Instantiates a new digital driver.
+	 *
+	 * @param httpDeleteService the http delete service
+	 * @param httpCreateService the http create service
+	 * @param userNameDelete the user name delete
+	 * @param passwordDelete the password delete
+	 * @param userNameCreate the user name create
+	 * @param passwordCreate the password create
+	 * @param tigoSportProvisioning the tigo sport provisioning
+	 * @param passwordTigoSport the password tigo sport
+	 * @throws AdapterException the adapter exception
+	 */
+	public DigitalDriver(final String httpDeleteService, final String httpCreateService, final String userNameDelete,
+			final String passwordDelete, final String userNameCreate, final String passwordCreate, final String tigoSportProvisioning, final String passwordTigoSport)
+			throws AdapterException {
+<span class="fc" id="L63">		super();</span>
+<span class="fc" id="L64">		final Map&lt;String, String&gt; httpProperties = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L65">		httpProperties.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L66">		httpProperties.put(&quot;Connection&quot;, &quot;Keep-Alive&quot;);</span>
+<span class="fc" id="L67">		this.httpDeleteService = httpDeleteService;</span>
+<span class="fc" id="L68">		this.httpCreateService = httpCreateService;</span>
+<span class="fc" id="L69">		this.httpTigoSportProv = tigoSportProvisioning;</span>
+<span class="fc" id="L70">		this.userNameDelete = userNameDelete;</span>
+<span class="fc" id="L71">		this.passwordDelete = passwordDelete;</span>
+<span class="fc" id="L72">		this.userNameCreate = userNameCreate;</span>
+<span class="fc" id="L73">		this.passwordCreate = passwordCreate;</span>
+<span class="fc" id="L74">		this.passwordTigoSport = passwordTigoSport;</span>
+<span class="fc" id="L75">	}</span>
+
+	
+	/**
+	 * Execute driver.
+	 *
+	 * @param abstractDriver the abstract driver
+	 * @return the task response type
+	 * @throws AdapterException the adapter exception
+	 */
+	public TaskResponseType executeDriver(final AbstractDriver abstractDriver) throws AdapterException {
+<span class="fc" id="L86">		abstractDriver.setHttpDeleteService(httpDeleteService);</span>
+<span class="fc" id="L87">		abstractDriver.setHttpCreateService(httpCreateService);</span>
+<span class="fc" id="L88">		abstractDriver.setHttpTigoSportProv(httpTigoSportProv);</span>
+<span class="fc" id="L89">		abstractDriver.setUserNameDelete(userNameDelete);</span>
+<span class="fc" id="L90">		abstractDriver.setUserNameCreate(userNameCreate);</span>
+<span class="fc" id="L91">		abstractDriver.setPasswordCreate(passwordCreate);</span>
+<span class="fc" id="L92">		abstractDriver.setPasswordDelete(passwordDelete);</span>
+<span class="fc" id="L93">		abstractDriver.setPasswordTigoSport(passwordTigoSport);</span>
+		
+<span class="fc" id="L95">		return abstractDriver.execute();</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>
